@@ -15,7 +15,7 @@ func GerInfoDB(request string) []string {
 		if err := rows.Scan(&infocity.City, &infocity.Item, &infocity.Quantity, &infocity.Price); err != nil {
 			log.Println(err)
 		}
-		answer = append(answer, "Город "+infocity.City+" Количество "+infocity.Quantity+" Цена "+infocity.Price+"\n")
+		answer = append(answer, "Город: "+infocity.City+"; Количество: "+infocity.Quantity+"; Цена: "+infocity.Price+"\n")
 	}
 	return answer
 }

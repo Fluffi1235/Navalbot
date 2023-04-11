@@ -40,7 +40,7 @@ func (b *Bot) HandlingMessage(msgChan <-chan *model.Message) {
 			for _, value := range answer {
 				b.Source.Send(value, msg.ChatID)
 			}
-			b.Source.Send("Вот все города где продается этот товар", msg.ChatID)
+			b.Source.Send("Вот все города где продается "+msg.Text, msg.ChatID)
 		}
 	}
 }
