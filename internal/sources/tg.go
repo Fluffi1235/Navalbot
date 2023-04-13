@@ -5,7 +5,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"naval/internal/model"
-	"naval/resources"
+	"naval/internal/resources"
 )
 
 type Source interface {

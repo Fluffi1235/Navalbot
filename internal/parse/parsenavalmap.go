@@ -4,58 +4,80 @@ import (
 	"encoding/json"
 	"log"
 	"naval/internal/model"
-	"naval/internal/service"
+	"naval/internal/repository"
 	"net/http"
 )
 
-func ParceCity() {
+type Parser struct {
+	repo repository.NavalRepo
+}
+
+func New(repo repository.NavalRepo) *Parser {
+	return &Parser{
+		repo: repo,
+	}
+}
+
+func (p *Parser) ParceCity() {
 	resp, err := http.Get(model.Pblink)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
-	decoder := json.NewDecoder(resp.Body)
+
 	pb := make([]model.Pb, 0, 0)
-	err = decoder.Decode(&pb)
+
+	err = json.NewDecoder(resp.Body).Decode(&pb)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	for _, v := range pb {
-		service.SavePb(v)
+		err = p.repo.SavePb(v)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 }
 
-func Port() {
+func (p *Parser) Port() {
 	resp, err := http.Get(model.Portslink)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
-	decoder := json.NewDecoder(resp.Body)
+
 	port := make([]model.Port, 0, 0)
-	err = decoder.Decode(&port)
+	err = json.NewDecoder(resp.Body).Decode(&port)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	for _, v := range port {
-		service.SaveCitiInfo(v)
+		err = p.repo.SaveCitiInfo(v)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
-	service.CreatNewTable()
 }
 
-func Items() {
+func (p *Parser) Items() {
 	resp, err := http.Get(model.Itemslink)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer resp.Body.Close()
-	decoder := json.NewDecoder(resp.Body)
+
 	items := make([]model.Items, 0, 0)
-	err = decoder.Decode(&items)
+	err = json.NewDecoder(resp.Body).Decode(&items)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	for _, v := range items {
-		service.SaveItems(v)
+		err = p.repo.SaveItems(v)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	}
 }

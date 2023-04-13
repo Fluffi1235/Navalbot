@@ -3,28 +3,24 @@ package dao
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"naval/internal/model"
-	"naval/resources"
 	"strings"
 )
 
 func SavePb(town model.Pb) {
-	db, err := sql.Open("postgres", resources.ConnectDb)
+	db, err := sql.Open("sqlite3", "file:locked.sqlite")
 	if err != nil {
 		log.Println("Error connecting to dao")
 		return
 	}
 	defer db.Close()
-	_, err = db.Exec("INSERT INTO cities(id_city, name) VALUES($1, $2)", town.Id, town.NameTown)
-	if err != nil {
-		log.Println("Error inserting into dao")
-		return
-	}
+
 }
 
 func SaveItems(items model.Items) {
-	db, err := sql.Open("postgres", resources.ConnectDb)
+	db, err := sql.Open("sqlite3", "file:locked.sqlite")
 	if err != nil {
 		log.Println("Error connecting to dao")
 		return
@@ -38,7 +34,7 @@ func SaveItems(items model.Items) {
 }
 
 func SaveCitiInfo(port model.Port) {
-	db, err := sql.Open("postgres", resources.ConnectDb)
+	db, err := sql.Open("sqlite3", "file:locked.sqlite")
 	if err != nil {
 		log.Println("Error connecting to dao")
 		return

@@ -2,12 +2,12 @@ package dao
 
 import (
 	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 	"log"
-	"naval/resources"
 )
 
 func GerInfoDB(request string) *sql.Rows {
-	db, err := sql.Open("postgres", resources.ConnectDb)
+	db, err := sql.Open("sqlite3", "file:locked.sqlite")
 	if err != nil {
 		log.Println("Error connecting to dao")
 	}

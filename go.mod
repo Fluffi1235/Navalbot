@@ -7,4 +7,8 @@ require (
 	github.com/lib/pq v1.10.7
 )
 
-require github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+require (
+	github.com/jmoiron/sqlx v1.3.5 // indirect
+	github.com/mattn/go-sqlite3 v1.14.16 // indirect
+	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+)
