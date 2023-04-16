@@ -81,7 +81,7 @@ func (r Repository) SaveCitiInfo(port model.Port) error {
 }
 
 func (r Repository) GetInfoDB(request string) (*sql.Rows, error) {
-	rows, err := r.db.Query("SELECT * FROM info_city where item_name = $1", request)
+	rows, err := r.db.Query("SELECT * FROM info_city where item_name = $1 ORDER BY city_name", request)
 	if err != nil {
 		log.Println(err)
 		return nil, err

@@ -12,6 +12,7 @@ import (
 	"naval/internal/bot"
 	"naval/internal/parse"
 	"naval/internal/repository"
+	"naval/internal/service"
 	"naval/internal/sources"
 	"sync"
 )
@@ -38,6 +39,8 @@ func main() {
 	config, err := LoadConfigFromYaml()
 	if err != nil {
 		fmt.Print("Error load configs")
+	} else {
+		fmt.Println("Config read successfully")
 	}
 	db, err := sql.Open("postgres", config.ConnectDb)
 	if err != nil {
@@ -50,19 +53,24 @@ func main() {
 	err = repo.ClearDB()
 	if err != nil {
 		fmt.Println("Error ClearDB", err)
+	} else {
+		fmt.Println("Database cleaned up")
 	}
 	parser := parse.New(repo)
-	parser.ParceCity()
+	_ = service.New(repo)
+	parser.City()
 	parser.Items()
 	parser.Port()
-
+	fmt.Println("Successful write to database")
 	err = repo.CreatTableInfo_city()
 	if err != nil {
 		log.Fatalln("Error CreatTableInfoCity", err)
+	} else {
+		fmt.Println("New table created")
 	}
 
 	ctx := context.Background()
-	mybot := bot.NewBot(sources.NewDs("MTA5NjIxNDcwNTkzNDE3MjMwMQ.Ghkbx4.XIL_jBeuNYsUaMYWOilCJ-v7sdex8lGBEQB7mU"))
+	mybot := bot.NewBot(sources.NewDs(config.DSToken))
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)

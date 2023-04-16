@@ -6,6 +6,7 @@ import (
 	"naval/internal/repository"
 	"naval/internal/service"
 	"naval/internal/sources"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -32,16 +33,18 @@ func (b *Bot) RunBot(ctx context.Context, wg *sync.WaitGroup, repo repository.Na
 }
 
 func (b *Bot) HandlingMessage(msgChan <-chan *model.Message, repo repository.NavalRepo) {
+	service := service.New(repo)
 	for msg := range msgChan {
 		answer := make([]string, 0, 0)
-		answer = service.GerInfoDB(strings.ToLower(msg.Text), repo)
+		var countercity int
+		answer, countercity = service.GerInfoDB(strings.ToLower(msg.Text))
 		if answer[0] == "" {
 			b.Source.Send("Неверное название предмета", msg.ChatID)
 		} else {
 			for _, value := range answer {
 				b.Source.Send(value, msg.ChatID)
 			}
-			b.Source.Send("Вот все города где продается "+msg.Text, msg.ChatID)
+			b.Source.Send("Вот все города где продается "+msg.Text+"\nВсего "+strconv.Itoa(countercity)+" городов", msg.ChatID)
 		}
 	}
 }

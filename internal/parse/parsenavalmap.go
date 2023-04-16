@@ -18,7 +18,7 @@ func New(repo repository.NavalRepo) *Parser {
 	}
 }
 
-func (p *Parser) ParceCity() {
+func (p *Parser) City() {
 	resp, err := http.Get(model.Pblink)
 	if err != nil {
 		log.Fatal(err)
