@@ -2,40 +2,31 @@ package service
 
 import (
 	"log"
-	"naval/internal/dao"
 	"naval/internal/model"
+	"naval/internal/repository"
 )
 
-func GerInfoDB(request string) []string {
-	answer := make([]string, 0, 0)
+func GerInfoDB(request string, repo repository.NavalRepo) []string {
+	answermas := make([]string, 0, 0)
+	var counter int
+	var answer string
 	infocity := model.Answer{}
-	rows := dao.GerInfoDB(request)
+	rows, _ := repo.GetInfoDB(request)
 	defer rows.Close()
 	for rows.Next() {
 		if err := rows.Scan(&infocity.City, &infocity.Item, &infocity.Quantity, &infocity.Price); err != nil {
 			log.Println(err)
 		}
-		answer = append(answer, "Город: "+infocity.City+"; Количество: "+infocity.Quantity+"; Цена: "+infocity.Price+"\n")
+		if counter == 25 {
+			answermas = append(answermas, answer)
+			answer = ""
+			counter = 0
+		}
+		answer = answer + "Город: " + infocity.City + "; Количество: " + infocity.Quantity + "; Цена: " + infocity.Price + "\n"
+		counter++
 	}
-	return answer
-}
-
-func ClearDb() {
-	dao.ClearDb()
-}
-
-func SavePb(town model.Pb) {
-	dao.SavePb(town)
-}
-
-func SaveItems(items model.Items) {
-	dao.SaveItems(items)
-}
-
-func SaveCitiInfo(port model.Port) {
-	dao.SaveCitiInfo(port)
-}
-
-func CreatNewTable() {
-	dao.CreatTableInfo_city()
+	if len(answermas) == 0 {
+		answermas = append(answermas, answer)
+	}
+	return answermas
 }

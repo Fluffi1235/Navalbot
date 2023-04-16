@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"naval/internal/model"
+	"naval/internal/repository"
 	"naval/internal/service"
 	"naval/internal/sources"
 	"strings"
@@ -19,22 +20,22 @@ func NewBot(Source sources.Source) Bot {
 	}
 }
 
-func (b *Bot) RunBot(ctx context.Context, wg *sync.WaitGroup) {
+func (b *Bot) RunBot(ctx context.Context, wg *sync.WaitGroup, repo repository.NavalRepo) {
 	msgChan := make(chan *model.Message)
 
 	go b.Source.Read(ctx, msgChan)
 
-	b.HandlingMessage(msgChan)
+	b.HandlingMessage(msgChan, repo)
 
 	close(msgChan)
 	wg.Done()
 }
 
-func (b *Bot) HandlingMessage(msgChan <-chan *model.Message) {
+func (b *Bot) HandlingMessage(msgChan <-chan *model.Message, repo repository.NavalRepo) {
 	for msg := range msgChan {
 		answer := make([]string, 0, 0)
-		answer = service.GerInfoDB(strings.ToLower(msg.Text))
-		if len(answer) == 0 {
+		answer = service.GerInfoDB(strings.ToLower(msg.Text), repo)
+		if answer[0] == "" {
 			b.Source.Send("Неверное название предмета", msg.ChatID)
 		} else {
 			for _, value := range answer {

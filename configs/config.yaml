@@ -1,0 +1,2 @@
+connectdb: "host= port= user= password= dbname= sslmode="
+dstoken: "Token"

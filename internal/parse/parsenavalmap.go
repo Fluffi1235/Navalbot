@@ -4,11 +4,21 @@ import (
 	"encoding/json"
 	"log"
 	"naval/internal/model"
-	"naval/internal/service"
+	"naval/internal/repository"
 	"net/http"
 )
 
-func ParceCity() {
+type Parser struct {
+	repo repository.NavalRepo
+}
+
+func New(repo repository.NavalRepo) *Parser {
+	return &Parser{
+		repo: repo,
+	}
+}
+
+func (p *Parser) ParceCity() {
 	resp, err := http.Get(model.Pblink)
 	if err != nil {
 		log.Fatal(err)
@@ -21,11 +31,11 @@ func ParceCity() {
 		log.Fatal(err)
 	}
 	for _, v := range pb {
-		service.SavePb(v)
+		p.repo.SavePb(v)
 	}
 }
 
-func Port() {
+func (p *Parser) Port() {
 	resp, err := http.Get(model.Portslink)
 	if err != nil {
 		log.Fatal(err)
@@ -38,12 +48,11 @@ func Port() {
 		log.Fatal(err)
 	}
 	for _, v := range port {
-		service.SaveCitiInfo(v)
+		p.repo.SaveCitiInfo(v)
 	}
-	service.CreatNewTable()
 }
 
-func Items() {
+func (p *Parser) Items() {
 	resp, err := http.Get(model.Itemslink)
 	if err != nil {
 		log.Fatal(err)
@@ -56,6 +65,6 @@ func Items() {
 		log.Fatal(err)
 	}
 	for _, v := range items {
-		service.SaveItems(v)
+		p.repo.SaveItems(v)
 	}
 }
